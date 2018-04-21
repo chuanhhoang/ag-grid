@@ -25,7 +25,8 @@ export interface GroupCellRendererParams extends ICellRendererParams{
     fullWidth:boolean,
     checkbox:any,
     scope:any,
-    actualValue:string
+    actualValue:string,
+    readOnly:any
 }
 
 export class GroupCellRenderer extends Component implements ICellRenderer {
@@ -278,6 +279,16 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
+    private isReadOnly(): boolean {
+        let paramsReadOnly = this.params.readOnly;
+        if (typeof paramsReadOnly === "function") {
+            return paramsReadOnly();
+        } else {
+            return paramsReadOnly === true;
+        }
+    }
+    
+
     private addCheckboxIfNeeded(): void {
         let rowNode = this.displayedGroup;
         let checkboxNeeded = this.isUserWantsSelected()
@@ -290,7 +301,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (checkboxNeeded) {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
-            cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
+            cbSelectionComponent.init({rowNode: rowNode, column: this.params.column, readOnly: this.isReadOnly()});
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }

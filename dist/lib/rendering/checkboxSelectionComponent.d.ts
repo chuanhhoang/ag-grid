@@ -13,6 +13,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private rowNode;
     private column;
     private isRowSelectableFunc;
+    private readOnly;
     constructor();
     private createAndAddIcons();
     private onDataChanged();

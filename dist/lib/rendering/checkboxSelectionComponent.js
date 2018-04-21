@@ -40,9 +40,16 @@ var CheckboxSelectionComponent = (function (_super) {
         return _super.call(this, "<span class=\"ag-selection-checkbox\"/>") || this;
     }
     CheckboxSelectionComponent.prototype.createAndAddIcons = function () {
-        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
-        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
+        if (this.readOnly) {
+            this.eCheckedIcon = utils_1.Utils.createIconNoSpan("checkboxCheckedReadOnly", this.gridOptionsWrapper, this.column);
+            this.eUncheckedIcon = utils_1.Utils.createIconNoSpan("checkboxUncheckedReadOnly", this.gridOptionsWrapper, this.column);
+            this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan("checkboxIndeterminateReadOnly", this.gridOptionsWrapper, this.column);
+        }
+        else {
+            this.eCheckedIcon = utils_1.Utils.createIconNoSpan("checkboxChecked", this.gridOptionsWrapper, this.column);
+            this.eUncheckedIcon = utils_1.Utils.createIconNoSpan("checkboxUnchecked", this.gridOptionsWrapper, this.column);
+            this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan("checkboxIndeterminate", this.gridOptionsWrapper, this.column);
+        }
         var element = this.getGui();
         element.appendChild(this.eCheckedIcon);
         element.appendChild(this.eUncheckedIcon);
@@ -63,24 +70,32 @@ var CheckboxSelectionComponent = (function (_super) {
         utils_1.Utils.setVisible(this.eIndeterminateIcon, typeof state !== 'boolean');
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
-        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        var updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
-        return updatedCount;
+        if (!this.readOnly) {
+            var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+            var updatedCount = this.rowNode.setSelectedParams({ newValue: false, groupSelectsFiltered: groupSelectsFiltered });
+            return updatedCount;
+        }
+        return 0;
     };
     CheckboxSelectionComponent.prototype.onUncheckedClicked = function (event) {
-        var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        var updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
-        return updatedCount;
+        if (!this.readOnly) {
+            var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+            var updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
+            return updatedCount;
+        }
     };
     CheckboxSelectionComponent.prototype.onIndeterminateClicked = function (event) {
-        var result = this.onUncheckedClicked(event);
-        if (result === 0) {
-            this.onCheckedClicked();
+        if (!this.readOnly) {
+            var result = this.onUncheckedClicked(event);
+            if (result === 0) {
+                this.onCheckedClicked();
+            }
         }
     };
     CheckboxSelectionComponent.prototype.init = function (params) {
         this.rowNode = params.rowNode;
         this.column = params.column;
+        this.readOnly = params.readOnly;
         this.createAndAddIcons();
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row

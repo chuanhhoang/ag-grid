@@ -14,6 +14,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     checkbox: any;
     scope: any;
     actualValue: string;
+    readOnly: any;
 }
 export declare class GroupCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE;
@@ -49,6 +50,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private updateChildCount();
     private createLeafCell();
     private isUserWantsSelected();
+    private isReadOnly();
     private addCheckboxIfNeeded();
     private addExpandAndContract();
     private onAllChildrenCountChanged();

@@ -13,6 +13,7 @@ export interface SetSelectedParams {
     tailingNodeInSequence?: boolean;
     rangeSelect?: boolean;
     groupSelectsFiltered?: boolean;
+    fireSelectionChangedEvent?: boolean;
 }
 export interface RowNodeEvent extends AgEvent {
     node: RowNode;
@@ -191,7 +192,7 @@ export declare class RowNode implements IEventEmitter {
     calculateSelectedFromChildren(): void;
     private calculateSelectedFromChildrenBubbleUp();
     setSelectedInitialValue(selected: boolean): void;
-    setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean): void;
+    setSelected(newValue: boolean, clearSelection?: boolean, tailingNodeInSequence?: boolean, fireSelectionChangedEvent?: boolean): void;
     isRowPinned(): boolean;
     setSelectedParams(params: SetSelectedParams): number;
     private doRowRangeSelection();

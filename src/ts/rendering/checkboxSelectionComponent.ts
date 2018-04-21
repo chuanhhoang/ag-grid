@@ -25,15 +25,22 @@ export class CheckboxSelectionComponent extends Component {
     private rowNode: RowNode;
     private column: Column;
     private isRowSelectableFunc: IsRowSelectable;
+    private readOnly: boolean;
 
     constructor() {
         super(`<span class="ag-selection-checkbox"/>`);
     }
 
     private createAndAddIcons(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
-        this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
+        if (this.readOnly) {
+            this.eCheckedIcon = _.createIconNoSpan("checkboxCheckedReadOnly", this.gridOptionsWrapper, this.column);
+            this.eUncheckedIcon = _.createIconNoSpan("checkboxUncheckedReadOnly", this.gridOptionsWrapper, this.column);
+            this.eIndeterminateIcon = _.createIconNoSpan("checkboxIndeterminateReadOnly", this.gridOptionsWrapper, this.column);
+        } else {
+            this.eCheckedIcon = _.createIconNoSpan("checkboxChecked", this.gridOptionsWrapper, this.column);
+            this.eUncheckedIcon = _.createIconNoSpan("checkboxUnchecked", this.gridOptionsWrapper, this.column);
+            this.eIndeterminateIcon = _.createIconNoSpan("checkboxIndeterminate", this.gridOptionsWrapper, this.column);
+        }
 
         let element = this.getGui();
         element.appendChild(this.eCheckedIcon);
@@ -59,27 +66,35 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onCheckedClicked(): number {
-        let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        let updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
-        return updatedCount;
+        if (!this.readOnly) {
+            let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+            let updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
+            return updatedCount;    
+        }
+        return 0;
     }
 
     private onUncheckedClicked(event: MouseEvent): number {
-        let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
-        let updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
-        return updatedCount;
+        if (!this.readOnly) {
+            let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
+            let updatedCount = this.rowNode.setSelectedParams({newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered});
+            return updatedCount;    
+        }
     }
 
     private onIndeterminateClicked(event: MouseEvent): void {
-        let result = this.onUncheckedClicked(event);
-        if (result===0) {
-            this.onCheckedClicked();
+        if (!this.readOnly) {
+            let result = this.onUncheckedClicked(event);
+            if (result===0) {
+                this.onCheckedClicked();
+            }
         }
     }
 
     public init(params: any): void {
         this.rowNode = params.rowNode;
         this.column = params.column;
+        this.readOnly = params.readOnly;
 
         this.createAndAddIcons();
 

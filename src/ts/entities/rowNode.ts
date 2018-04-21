@@ -32,6 +32,8 @@ export interface SetSelectedParams {
     rangeSelect?: boolean;
     // used in group selection, if true, filtered out children will not be selected
     groupSelectsFiltered?: boolean;
+    // added so can enable/disable selection changed manually
+    fireSelectionChangedEvent?: boolean;
 }
 
 export interface RowNodeEvent extends AgEvent {
@@ -552,12 +554,13 @@ export class RowNode implements IEventEmitter {
         this.selected = selected;
     }
 
-    public setSelected(newValue: boolean, clearSelection: boolean = false, tailingNodeInSequence: boolean = false) {
+    public setSelected(newValue: boolean, clearSelection: boolean = false, tailingNodeInSequence: boolean = false, fireSelectionChangedEvent: boolean = true) {
         this.setSelectedParams({
             newValue: newValue,
             clearSelection: clearSelection,
             tailingNodeInSequence: tailingNodeInSequence,
-            rangeSelect: false
+            rangeSelect: false,
+            fireSelectionChangedEvent: fireSelectionChangedEvent
         });
     }
 
@@ -576,6 +579,7 @@ export class RowNode implements IEventEmitter {
         let rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         let groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
+        let fireSelectionChangedEvent = params.fireSelectionChangedEvent === true;
 
         if (this.id===undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
@@ -648,12 +652,14 @@ export class RowNode implements IEventEmitter {
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
-                let event: SelectionChangedEvent = {
-                    type: Events.EVENT_SELECTION_CHANGED,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
-                };
-                this.mainEventService.dispatchEvent(event);
+                if (fireSelectionChangedEvent) {
+                    let event: SelectionChangedEvent = {
+                        type: Events.EVENT_SELECTION_CHANGED,
+                        api: this.gridApi,
+                        columnApi: this.columnApi
+                    };
+                    this.mainEventService.dispatchEvent(event);
+                }
             }
 
             // so if user next does shift-select, we know where to start the selection from

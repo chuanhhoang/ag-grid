@@ -224,6 +224,15 @@ var GroupCellRenderer = (function (_super) {
             return paramsCheckbox === true;
         }
     };
+    GroupCellRenderer.prototype.isReadOnly = function () {
+        var paramsReadOnly = this.params.readOnly;
+        if (typeof paramsReadOnly === "function") {
+            return paramsReadOnly();
+        }
+        else {
+            return paramsReadOnly === true;
+        }
+    };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function () {
         var rowNode = this.displayedGroup;
         var checkboxNeeded = this.isUserWantsSelected()
@@ -233,7 +242,7 @@ var GroupCellRenderer = (function (_super) {
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent_1);
-            cbSelectionComponent_1.init({ rowNode: rowNode, column: this.params.column });
+            cbSelectionComponent_1.init({ rowNode: rowNode, column: this.params.column, readOnly: this.isReadOnly() });
             this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
