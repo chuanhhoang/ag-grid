@@ -579,7 +579,7 @@ export class RowNode implements IEventEmitter {
         let rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         let groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
-        let fireSelectionChangedEvent = params.fireSelectionChangedEvent === true;
+        let fireSelectionChangedEvent = params.fireSelectionChangedEvent == undefined || params.fireSelectionChangedEvent === true;
 
         if (this.id===undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
@@ -756,7 +756,8 @@ export class RowNode implements IEventEmitter {
                 updatedCount += children[i].setSelectedParams({
                     newValue: newValue,
                     clearSelection: false,
-                    tailingNodeInSequence: true
+                    tailingNodeInSequence: true,
+                    fireSelectionChangedEvent: false
                 });
         }
         return updatedCount;
