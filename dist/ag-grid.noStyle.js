@@ -10119,7 +10119,7 @@ var RowNode = (function () {
         var rangeSelect = params.rangeSelect === true;
         // groupSelectsFiltered only makes sense when group selects children
         var groupSelectsFiltered = groupSelectsChildren && (params.groupSelectsFiltered === true);
-        var fireSelectionChangedEvent = params.fireSelectionChangedEvent === true;
+        var fireSelectionChangedEvent = params.fireSelectionChangedEvent == undefined || params.fireSelectionChangedEvent === true;
         if (this.id === undefined) {
             console.warn('ag-Grid: cannot select node until id for node is known');
             return 0;
@@ -10272,7 +10272,8 @@ var RowNode = (function () {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
                 clearSelection: false,
-                tailingNodeInSequence: true
+                tailingNodeInSequence: true,
+                fireSelectionChangedEvent: false
             });
         }
         return updatedCount;
