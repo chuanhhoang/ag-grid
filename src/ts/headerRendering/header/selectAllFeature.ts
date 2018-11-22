@@ -74,13 +74,13 @@ export class SelectAllFeature extends BeanStub {
         this.updateStateOfCheckbox();
     }
 
-    private getNextCheckboxState(selectionCount: SelectionCount): boolean {
+    private getNextCheckboxState(selectionCount: SelectionCount): boolean {        
         if (selectionCount.selected===0 && selectionCount.notSelected===0) {
             // if no rows, always have it unselected
             return false;
         } else if (selectionCount.selected>0 && selectionCount.notSelected>0) {
             // if mix of selected and unselected, this is the tri-state
-            return null;
+            return true;
         } else if (selectionCount.selected>0) {
             // only selected
             return true;

@@ -83,7 +83,7 @@ var SelectAllFeature = (function (_super) {
         }
         else if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
             // if mix of selected and unselected, this is the tri-state
-            return null;
+            return true;
         }
         else if (selectionCount.selected > 0) {
             // only selected
